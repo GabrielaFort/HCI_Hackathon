@@ -1,0 +1,17 @@
+{
+   "original_path_lab_diagnosis": "Adenocarcinoma, well-moderately differentiated",
+   "test_order_id": "7KIFJLGG6T",
+   "icd_codes": [
+      {
+         "code": "8140/3",
+         "description": "Adenocarcinoma",
+         "type": "ICD-O Morphology"
+      },
+      {
+         "code": "C18.9",
+         "description": "Colon",
+         "type": "ICD-O Topology"
+      }
+   ],
+   "sample_site": "Colon, sigmoid"
+}

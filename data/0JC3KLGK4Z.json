@@ -1,0 +1,22 @@
+{
+   "original_path_lab_diagnosis": "Invasive ductal carcinoma",
+   "test_order_id": "0JC3KLGK4Z",
+   "icd_codes": [
+      {
+         "code": "C50.9",
+         "description": "Malignant neoplasm of breast of unspecified site",
+         "type": "ICD-10"
+      },
+      {
+         "code": "8500/3",
+         "description": "Infiltrating duct carcinoma",
+         "type": "ICD-O Morphology"
+      },
+      {
+         "code": "C50.9",
+         "description": "Breast",
+         "type": "ICD-O Topology"
+      }
+   ],
+   "sample_site": "Breast, left"
+}

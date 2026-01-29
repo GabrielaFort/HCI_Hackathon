@@ -1,0 +1,22 @@
+{
+   "original_path_lab_diagnosis": "Astrocytoma, IDH-mutant, WHO grade 2",
+   "test_order_id": "7G388A7SXU",
+   "icd_codes": [
+      {
+         "code": "C72.9",
+         "description": "Malignant neoplasm of central nervous system, unspecified",
+         "type": "ICD-10"
+      },
+      {
+         "code": "9400/3",
+         "description": "Astrocytoma",
+         "type": "ICD-O Morphology"
+      },
+      {
+         "code": "C71.9",
+         "description": "Brain",
+         "type": "ICD-O Topology"
+      }
+   ],
+   "sample_site": "Brain, right frontal lobe"
+}

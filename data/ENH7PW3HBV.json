@@ -1,0 +1,21 @@
+{
+   "original_path_lab_diagnosis": "Well differentiated neuroendocrine tumor (typical carcinoid)",
+   "test_order_id": "ENH7PW3HBV",
+   "icd_codes": [
+      {
+         "code": "D48.9",
+         "description": "Neoplasm of uncertain behavior, unspecified",
+         "type": "ICD-10"
+      },
+      {
+         "code": "127572005",
+         "type": "ICD-O Morphology"
+      },
+      {
+         "code": "C80.9",
+         "description": "Unknown primary site",
+         "type": "ICD-O Topology"
+      }
+   ],
+   "sample_site": "Mediastinal mass"
+}
