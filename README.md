@@ -30,8 +30,8 @@ You will need:
 Clone the GitHub repository:
 
 ```bash
-git clone <GITHUB_REPO_URL>
-cd <REPO_NAME>/src
+git clone [<GITHUB_REPO_URL>](https://github.com/GabrielaFort/HCI_Hackathon.git)
+cd HCI_Hackathon/src
 ```
 
 ## Step 2 - Install python dependancies
