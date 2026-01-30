@@ -9,16 +9,19 @@ st.title("AI Oncotree Classification Assistant")
 st.text("Predict oncotree tissue, name, and code from tumor JSON using locally-run LLMs")
 
 # LLM settings (kept minimal)
-available_models = [
-    "granite4:latest",
-    "mistral:7b",
-    "llama3.1:8b",
-    "gemma3:1b",
-    "gemma3:4b"
-]
+# call once at startup
+available_models = tools.discover_local_ollama_models()
+
+# show a helpful sidebar message if empty
+if not available_models:
+    st.sidebar.error(
+        "No local Ollama models discovered. Make sure Ollama is installed and running, "
+        "and that the Python `ollama` package can reach it."
+    )
 
 # model selection as a dropdown in the sidebar
-model = st.sidebar.selectbox("Model", options=available_models, index=0)
+model = st.sidebar.selectbox("Model", options=available_models or ["(no models)"], index=0)
+
 # Temperature slider to select temp
 temperature = st.sidebar.number_input("Temperature", min_value=0.0, max_value=1.0, value=0.0, step=0.01)
 
