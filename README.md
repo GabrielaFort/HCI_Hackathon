@@ -31,7 +31,7 @@ Clone the GitHub repository:
 
 ```bash
 git clone <GITHUB_REPO_URL>
-cd <REPO_NAME>/src
+cd <REPO_NAME>/src```
 
 ## Step 2 - Install python dependancies
 pip install streamlit ollama
