@@ -2,7 +2,7 @@
 # AI OncoTree Classification Assistant
 
 ## Overview
-This project is a lightweight **Streamlit web application** that uses a **locally running LLM (via Ollama)** to assist with:
+This project is a lightweight **Streamlit web application** that uses a **locally running LLM (via Ollama)** to assist with the following tasks given a tumor test result JSON file:
 
 1. Predicting the **OncoTree tissue**
 2. Predicting the **OncoTree name**
@@ -35,7 +35,7 @@ cd HCI_Hackathon/src
 ```
 
 ## Step 2 - Install python dependancies
-pip install streamlit ollama
+```pip install streamlit ollama```
 
 ## Step 3 - Install and set up Ollama
 1) Install Ollama (follow the official Ollama instructions for your OS)
