@@ -208,6 +208,7 @@ def generate_response(model,temperature,system_prompt,user_prompt):
     # Clean raw output
     return clean_response(raw)
 
+
 # ---------- Convenience / combined flows ----------
 def predict_oncotree_name_from_tissue(tissue_name,
                                       tumor_json_path,
@@ -222,6 +223,7 @@ def predict_oncotree_name_from_tissue(tissue_name,
     sys_prompt = create_system_prompt_for_names()
     user_prompt = create_user_prompt_for_names(tumor_json, oncotree_names)
     return generate_response(model=model, temperature=temperature, system_prompt=sys_prompt, user_prompt=user_prompt)
+
 
 def predict_tissue_from_list(tissue_list_path,
                              tumor_json_path,
