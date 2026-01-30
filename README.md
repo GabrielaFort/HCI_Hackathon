@@ -30,7 +30,7 @@ You will need:
 Clone the GitHub repository:
 
 ```bash
-git clone [<GITHUB_REPO_URL>](https://github.com/GabrielaFort/HCI_Hackathon.git)
+git clone https://github.com/GabrielaFort/HCI_Hackathon.git
 cd HCI_Hackathon/src
 ```
 
