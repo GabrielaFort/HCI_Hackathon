@@ -2,6 +2,7 @@ import json
 import os
 from urllib import response
 import ollama
+import requests
 
 
 # ---------- File parsing helpers ----------
@@ -182,29 +183,56 @@ def discover_local_ollama_models():
 
 
 # ---------- LLM wrapper ----------
-def generate_response(model,temperature,system_prompt,user_prompt):
+def generate_response(model,temperature,system_prompt,user_prompt,mode): # mode is local or cloud
     """
     Call ollama.chat and return the assistant content string.
     Raises RuntimeError if the response doesn't contain expected structure.
     """
     options = {"temperature": float(temperature)}
-    # Ollama client usage assumed available in environment
-    response = ollama.chat(
-        model=model,
-        stream=False,
-        options=options,
-        think=False,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
-    # Expected structure: {'message': {'content': '...'}}
-    try:
-        raw=response['message']['content']
-    except (KeyError, TypeError):
-        raise RuntimeError(f"Unexpected response structure: {response}")
-    
+
+    if mode == "local":
+        # Ollama client usage assumed available in environment
+        response = ollama.chat(
+            model=model,
+            stream=False,
+            options=options,
+            think=False,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+        )
+        # Expected structure: {'message': {'content': '...'}}
+        try:
+            raw=response['message']['content']
+        except (KeyError, TypeError):
+            raise RuntimeError(f"Unexpected response structure: {response}")
+        
+    else:
+        # Use Ollama API format
+        api_key = os.getenv("OLLAMA_API_KEY")
+        api_url = "https://ollama.com"
+       
+        headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}],
+            "temperature": float(temperature),
+            "stream": False
+        }
+
+        response = requests.post(f"{api_url}/api/chat", headers=headers, json=payload)
+        response.raise_for_status()
+        content = response.json()
+
+        # Extract assistant message content
+        if "message" in content and "content" in content["message"]:
+            return content["message"]["content"].strip()
     # Clean raw output
     return clean_response(raw)
 
@@ -214,7 +242,8 @@ def predict_oncotree_name_from_tissue(tissue_name,
                                       tumor_json_path,
                                       model = "granite4:latest",
                                       temperature = 0.0,
-                                      data_base_path = "../data/oncotree_tissues"):
+                                      data_base_path = "../data/oncotree_tissues",
+                                      mode="local"):
     """
     Load oncotree names for a given tissue and tumor json, call LLM, return predicted oncotree name.
     """
@@ -222,20 +251,20 @@ def predict_oncotree_name_from_tissue(tissue_name,
     tumor_json = get_tumor_json(tumor_json_path)
     sys_prompt = create_system_prompt_for_names()
     user_prompt = create_user_prompt_for_names(tumor_json, oncotree_names)
-    return generate_response(model=model, temperature=temperature, system_prompt=sys_prompt, user_prompt=user_prompt)
-
+    return generate_response(model=model, temperature=temperature, system_prompt=sys_prompt, user_prompt=user_prompt, mode=mode)
 
 def predict_tissue_from_list(tissue_list_path,
                              tumor_json_path,
                              model = "granite4:latest",
-                             temperature = 0.0):
+                             temperature = 0.0,
+                             mode="local"):
     """
     Load tissue list and tumor json, call LLM, return predicted tissue.
     """
     tissues = parse_tissue_list(tissue_list_path)
     tumor_json = get_tumor_json(tumor_json_path)
     sys_prompt = create_system_prompt_for_tissues(tissues)
-    return generate_response(model=model, temperature=temperature, system_prompt=sys_prompt, user_prompt=tumor_json)
+    return generate_response(model=model, temperature=temperature, system_prompt=sys_prompt, user_prompt=tumor_json, mode=mode)
 
 
 

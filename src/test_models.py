@@ -8,7 +8,7 @@ import oncotree_utils as tools
 def get_test_order_id(parsed, filename):
     return parsed.get("test_order_id") 
 
-def process_file(path, tissue_list, oncotree_base, model, temperature):
+def process_file(path, tissue_list, oncotree_base, model, temperature, mode="local"):
     try:
         with open(path, "r", encoding="utf-8") as f:
             parsed = json.load(f)
@@ -24,6 +24,7 @@ def process_file(path, tissue_list, oncotree_base, model, temperature):
             tumor_json_path=path,
             model=model,
             temperature=temperature,
+            mode=mode,
         ).strip()
     except Exception:
         tissue = "none"
@@ -38,6 +39,7 @@ def process_file(path, tissue_list, oncotree_base, model, temperature):
             model=model,
             temperature=temperature,
             data_base_path=oncotree_base,
+            mode=mode
         ).strip()
     except Exception:
         onco_name = "none"
@@ -71,6 +73,7 @@ def main():
     p.add_argument("--oncotree-base", default="../data/oncotree_tissues", help="Base dir for oncotree mappings")
     p.add_argument("--model", default="granite4:latest", help="Model name")
     p.add_argument("--temperature", type=float, default=0.0, help="Model temperature")
+    p.add_argument("--mode", choices=["local", "cloud"], default="local", help="Whether to run cloud or local ollama model")
     p.add_argument("--ext", default=".json", help="File extension to look for")
     args = p.parse_args()
 
@@ -87,7 +90,7 @@ def main():
     with out_path.open("a", encoding="utf-8") as out:
         for f in files:
             try:
-                res = process_file(str(f), args.tissue_list, args.oncotree_base, args.model, args.temperature)
+                res = process_file(str(f), args.tissue_list, args.oncotree_base, args.model, args.temperature, mode=args.mode)
             except Exception:
                 res = {
                     "oncotree_tissue": "",
