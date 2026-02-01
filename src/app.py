@@ -11,8 +11,6 @@ st.text("Predict oncotree tissue, name, and code from tumor JSON using locally-r
 # initiate session state variables
 if "override_confirmed" not in st.session_state:
     st.session_state["override_confirmed"] = False
-if "override_confirmed_name" not in st.session_state:
-    st.session_state["override_confirmed_name"] = False
 
 # LLM settings (kept minimal)
 # call once at startup
@@ -93,6 +91,11 @@ with st.spinner("Predicting oncotree tissue..."):
         temperature=temperature
     )
 
+# Reset override flag if prediction changed since last run
+if st.session_state.get("last_predicted_tissue") != predicted_tissue:
+    st.session_state["override_confirmed"] = False
+st.session_state["last_predicted_tissue"] = predicted_tissue
+
 st.subheader("Predicted tissue")
 st.code(predicted_tissue or "(empty)")
 
@@ -119,25 +122,19 @@ if pred_lower == "unknown":
         "If you want to continue, choose a tissue from the dropdown and click the button below to confirm override."
     )
     # explicit confirmation button required to continue with chosen_tissue
-    if "override_confirmed" not in st.session_state:
-        st.session_state["override_confirmed"] = False
-
-    if st.button("Override and continue with selected tissue"):
+    if st.button("Override and continue with selected tissue", key="override_continue_unknown"):
         st.session_state["override_confirmed"] = True
 
     if not st.session_state["override_confirmed"]:
-        # halt until user clicks override button
         st.info("Waiting for manual override confirmation to continue.")
         st.stop()
-    # if override_confirmed is True, proceed using chosen_tissue
 
 # If prediction is blank or prediction not in canonical list -> require explicit override confirmation
 if is_blank or (predicted_tissue and predicted_tissue not in tissues):
     st.warning("Model did not return an accepted tissue. Select a tissue from the list and click the button below to confirm override if you want to proceed.")
-    if "override_confirmed" not in st.session_state:
-        st.session_state["override_confirmed"] = False
-
-    if st.button("Override and continue with selected tissue"):
+    
+    # explicit confirmation button required to continue with chosen_tissue
+    if st.button("Override and continue with selected tissue", key="override_continue_invalid"):
         st.session_state["override_confirmed"] = True
 
     if not st.session_state["override_confirmed"]:
@@ -149,11 +146,11 @@ st.success(f"Using tissue: {chosen_tissue}")
 
 
 # Step 2: predict oncotree name using chosen tissue (no manual override allowed)
-st.header("Step 2 — Predict oncotree name")
+st.header("Step 2 — Predict oncotree name and code")
 run = st.button("Run Step 2")
 
 if run:
-    with st.spinner("Predicting OncoTree name..."):
+    with st.spinner("Predicting OncoTree name and code..."):
         onco_pred = tools.predict_oncotree_name_from_tissue(
             tissue_name=chosen_tissue,
             tumor_json_path=tumor_json_path,
@@ -190,7 +187,6 @@ if run:
     final_onco_name = onco_pred
 
     # Step 3: map oncotree name to code
-    st.header("Step 3 — Map OncoTree name to code")
     oncotree_code = oncotree_map.get(final_onco_name)
 
     if oncotree_code:
